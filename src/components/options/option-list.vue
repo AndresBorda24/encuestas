@@ -22,14 +22,20 @@ const addItem = async (node: FormKitNode) => {
     :value="[{ title: '', help: '' }]"
     #default="{ items, node, value }"
   >
-    <p class="mt-4 mb-2 pb-2 font-bold text-sm text-gray-600">
+    <span class="font-bold text-sm text-gray-600">
       Opciones de respuesta para tu pregunta.
-       <button
-        type="button"
-        @click="addItem(node)"
-        class="border border-blue-600 text-blue-600 hover:bg-blue-500 hover:text-white p-1 rounded text-xs float-right font-normal"
-      > + Nueva Opción </button>
+    </span>
+    <p class="mt-4 pb-2 text-sm text-gray-500">
+      Aquí puedes definir el listado de opciones que el usuario puede seleccionar. El texto de ayuda es opcional. Puedes agregar una nueva <span class="italic">opción</span> dando clic en el botón azul: <span class="font-bold">+ Nueva Opción</span>.
     </p>
+    <p class="pb-2 text-sm text-gray-500">
+      Las opciones aparecerán en el orden que se escriban. Importante: El texto de ayuda solamente aparecerá en los campos que aplique: Seleccción Unica y Selección Multiple
+    </p>
+   <button
+      type="button"
+      @click="addItem(node)"
+      class="block border border-blue-600 text-blue-600 hover:bg-blue-500 hover:text-white p-1 rounded text-xs font-normal ms-auto mb-2"
+    > + Nueva Opción </button>
 
     <section
       ref="container"
@@ -41,20 +47,25 @@ const addItem = async (node: FormKitNode) => {
         outer-class="border"
         :index="index"
       >
-        <div class="flex gap-3 option-item">
-          <FormKit
-            type="text"
-            name="title"
-            validation="required"
-            label="Opcion"
-          />
-
-          <FormKit
-            label="Texto de ayuda"
-            type="text"
-            name="help"
-            help="Este texto se mostrará solamente si aplica."
-          />
+        <div class="flex p-1 option-item items-start">
+          <span class="p-3">{{ index + 1 }}) </span>
+          <div class="flex flex-1 flex-col gap-0">
+            <FormKit
+              type="text"
+              name="label"
+              placeholder="Requerido"
+              validation="required:trim"
+              wrapper-class="$reset mb-1 grid grid-cols-[2fr_10fr] gap-2 items-center"
+              label="Opción"
+            />
+            <FormKit
+              label="Ayuda"
+              type="text"
+              placeholder="Opcional"
+              name="help"
+              wrapper-class="$reset mb-1 grid grid-cols-[2fr_10fr] gap-2 items-center"
+            />
+          </div>
 
           <button
             type="button"
@@ -71,5 +82,8 @@ const addItem = async (node: FormKitNode) => {
 <style scoped>
   .option-container > .option-item:not(:first-of-type) {
     @apply border-t pt-3;
+  }
+  .option-item::before {
+    content: ;
   }
 </style>
