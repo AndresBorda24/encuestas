@@ -6,115 +6,131 @@ const props = defineProps<{
   type?: inputType
 }>()
 
-
 type validationRule = {
   value: string,
   label: string,
   help: string,
   for: inputType[],
-  withParams: boolean,
-  paramsPlaceholder: string | undefined,
-  paramsValidation: string | any[][] | undefined,
-  paramsHelp: string | undefined
+  params: {
+    type: string,
+    value?: string,
+    label?: string,
+    validation?: string | [rule: string, ... params: any[]][]
+    placeholder?: string
+    help?: string
+  }[]
 }
 
 const checkRules = ref<validationRule[]>([
   {
-    value: 'required:trim',
+    value: 'required',
     label: 'Requerido',
     help: 'El usuario deberá responder obligatoriamente',
-    for: [],
-    withParams: false,
-    paramsPlaceholder: undefined,
-    paramsValidation: undefined,
-    paramsHelp: undefined
+    for: [
+      "radio", "checkbox", "text", "date", "color", "email", "number", "password",
+      "range", "select", "tel", "textarea"
+    ],
+    params: [{
+      type: 'hidden',
+      value: 'trim'
+    }]
   },
   {
     value: 'contains_numeric',
     label: 'Debe Contener Números',
     help: 'La respuesta debe contener al menos un número.',
-    for: [],
-    withParams: false,
-    paramsPlaceholder: undefined,
-    paramsValidation: undefined,
-    paramsHelp: undefined
+    for: ["text", "textarea", "password"],
+    params: []
   },
   {
     value: 'length',
     label: 'Longitud de Texto',
     help: 'El campo debe tener una longitud entre dos valores. Ej: 100,500',
-    for: [],
-    withParams: true,
-    paramsPlaceholder: "minimo,maximo",
-    paramsValidation: [['required'], ['matches',/\d+,\d+/]],
-    paramsHelp: "Solamente aplica a campos de Texto"
+    for: ["text", "textarea", "password"],
+    params: [{
+      type: 'number',
+      label: 'Valor Mínimo',
+      placeholder: 'Mínimo',
+      validation: 'required:trim|number'
+    },{
+      type: 'number',
+      label: 'Valor Máximo',
+      placeholder: 'Máximo',
+      validation: 'required:trim|number'
+    }]
   },
   {
     value: 'min',
     label: 'Mínimo',
     help: 'Debe tener un valor mínimo específico. Ej: 1',
-    for: [],
-    withParams: true,
-    paramsPlaceholder: "minimo",
-    paramsValidation: 'required|number',
-    paramsHelp: "Solamente aplica a números"
+    for: ["number"],
+    params: [{
+      type: 'number',
+      label: 'Valor Mínimo',
+      validation: 'required:trim|number'
+    }]
   },
   {
     value: 'max',
     label: 'Máximo',
     help: 'Debe tener un valor máximo específico. Ej: 500',
-    for: [],
-    withParams: true,
-    paramsPlaceholder: "maximo",
-    paramsValidation: 'required|number',
-    paramsHelp: "Solamente aplica a números"
+    for: ["number"],
+    params: [{
+      type: 'number',
+      label: 'Valor Máximo',
+      validation: 'required:trim|number'
+    }]
   },
-  {
-    value: 'is',
-    label: '"Es"',
-    help: 'Debe ser uno de los valores específicos.',
-    for: [],
-    withParams: true,
-    paramsPlaceholder: "valor1,valor2...",
-    paramsValidation: undefined,
-    paramsHelp: "Solamente aplica a campos de Texto"
-  },
+  // Buscar una mejor implementacion para esta regla. Igualmente no creo que sea
+  // una validacion indispensable
+  // {
+  //   value: 'is',
+  //   label: '"Es"',
+  //   help: 'Debe ser uno de los valores específicos.',
+  //   for: [],
+  //   params: [{
+  //     type: 'string',
+  //     validation: 'required:trim|number'
+  //   }]
+  // },
   {
     value: 'date_before',
     label: '"Antes de"',
-    help: 'La fecha debe ser antes de la establecida.',
-    for: [],
-    withParams: true,
-    paramsPlaceholder: "aaaa-mm-dd",
-    paramsValidation: 'required|date_format:YYYY-MM-DD',
-    paramsHelp: "Solamente aplica a campos de Fecha"
+    help: 'La fecha debe ser anterior de la establecida.',
+    for: ["date"],
+    params: [{
+      type: 'date',
+      validation: 'required'
+    }]
   },
   {
     value: 'date_after',
     label: '"Despues de"',
-    help: 'La fecha debe ser antes de la establecida.',
-    for: [],
-    withParams: true,
-    paramsPlaceholder: "aaaa-mm-dd",
-    paramsValidation: 'required|date_format:YYYY-MM-DD',
-    paramsHelp: "Solamente aplica a campos de Fecha"
+    help: 'La fecha debe ser despúes de la establecida.',
+    for: ["date"],
+    params: [{
+      type: 'date',
+      validation: 'required'
+    }]
   }
 ])
+
+const availablesRules = computed(() => checkRules.value.filter(r =>
+  r.for.includes(props.type)
+))
 </script>
+
 <template>
-  <FormKit
-    type="group"
-    name="rules"
-  >
+  <FormKit type="group" name="rules" >
     <section>
       <span class="font-bold text-sm text-gray-600">Reglas de Validación</span>
       <p class="mb-2 text-sm text-gray-600">
         Estas reglas te permiten establecer cuando una respuesta debe ser aceptada.
       </p>
       <section class="grid divide-y border rounded bg-gray-50">
-        <template v-for="(rule, index) in checkRules" :key="index" >
-          <FormKit type="group" #default="{ value }">
-            <div class="grid grid-cols-2 gap-2 p-3">
+        <template v-for="(rule, index) in availablesRules" :key="index" >
+          <FormKit type="list" #default="{ value }">
+            <div class="p-3">
               <FormKit
                 type="checkbox"
                 name="rule"
@@ -124,21 +140,30 @@ const checkRules = ref<validationRule[]>([
                 :label="rule.label"
                 :help="rule.help"
               />
-              <FormKit
-                v-if="rule.withParams && value.rule"
-                type="text"
-                outer-class="max-w-full !mb-0"
-                help-class="text-pretty"
-                name="params"
-                :validation="rule.paramsValidation"
-                :placeholder="rule.paramsPlaceholder"
-                :help="rule.paramsHelp"
-              />
+              <div
+                v-if="Boolean(value && value[0])"
+                class="flex gap-1 flex-wrap"
+              >
+                <FormKit
+                  autocomplete="off"
+                  v-for="(param, index) in rule.params" :key="index"
+                  :type="param.type"
+                  outer-class="!mb-0"
+                  :value="param.value"
+                  help-class="text-pretty"
+                  :label="param.label"
+                  :name="`${param.type}-${index}`"
+                  :validation="param.validation"
+                  :placeholder="param.placeholder"
+                  :help="param.help"
+                />
+              </div>
             </div>
           </FormKit>
         </template>
 
       </section>
     </section>
+
   </FormKit>
 </template>

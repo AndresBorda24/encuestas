@@ -4,13 +4,18 @@ import IconTrash from '@/components/icons/icon-trash.vue'
 import type { FormKitNode } from '@formkit/core'
 
 const container = ref<HTMLElement | null>(null)
+
 const addItem = async (node: FormKitNode) => {
   const data = node.value as any[]
-  const x = { title: '', help: '' }
-  await node.input(data.concat(x))
+
+  await node.input(data.concat({ value: '', help: '' }))
   await nextTick()
-  if (!container.value) return
-  container.value.scrollTop = (node.children.length * 95)
+
+  if (!container.value) return;
+  // Hacemos scroll hasta el final de la lista
+  container.value.scrollTop = (node.children.length * 95);
+  // Foco al ultimo input
+  (container.value.querySelector('.option-item:last-of-type input') as HTMLElement)?.focus()
 }
 </script>
 
@@ -19,7 +24,7 @@ const addItem = async (node: FormKitNode) => {
     dynamic
     type="list"
     name="options"
-    :value="[{ title: '', help: '' }]"
+    :value="[{ value: '', help: '' }]"
     #default="{ items, node, value }"
   >
     <span class="font-bold text-sm text-gray-600">
@@ -34,7 +39,7 @@ const addItem = async (node: FormKitNode) => {
    <button
       type="button"
       @click="addItem(node)"
-      class="block border border-blue-600 text-blue-600 hover:bg-blue-500 hover:text-white p-1 rounded text-xs font-normal ms-auto mb-2"
+      class="block border border-teal-600 text-teal-600 hover:bg-teal-600 hover:text-white p-1 rounded text-xs font-normal ms-auto mb-2"
     > + Nueva Opción </button>
 
     <section
@@ -52,7 +57,7 @@ const addItem = async (node: FormKitNode) => {
           <div class="flex flex-1 flex-col gap-0">
             <FormKit
               type="text"
-              name="label"
+              name="value"
               placeholder="Requerido"
               validation="required:trim"
               wrapper-class="$reset mb-1 grid grid-cols-[2fr_10fr] gap-2 items-center"
@@ -66,7 +71,6 @@ const addItem = async (node: FormKitNode) => {
               wrapper-class="$reset mb-1 grid grid-cols-[2fr_10fr] gap-2 items-center"
             />
           </div>
-
           <button
             type="button"
             title="Eliminar Opción"
@@ -82,8 +86,5 @@ const addItem = async (node: FormKitNode) => {
 <style scoped>
   .option-container > .option-item:not(:first-of-type) {
     @apply border-t pt-3;
-  }
-  .option-item::before {
-    content: ;
   }
 </style>

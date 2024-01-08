@@ -1,105 +1,44 @@
 <script setup lang="ts">
+import { input } from "@/inputs"
 import { FormKit } from "@formkit/vue"
 import OptionList from "@/components/options/option-list.vue"
 import Validation from "@/components/options/validation.vue"
-
 import type { inputType } from "@/types"
 
-const input: { [k in inputType] : { name: string, example: any } } = {
-  radio: {
-    name: "Selección Única",
-    example: "examples/radio.PNG"
-  },
-  checkbox: {
-    name: "Selección Múltiple",
-    example: "examples/checkbox.PNG"
-  },
-  text: {
-    name: "Texto Corto",
-    example: "examples/text.PNG"
-  },
-  date: {
-    name: "Fecha",
-    example: "examples/date.PNG"
-  },
-  color: {
-    name: "Selección de Color",
-    example: "examples/color.PNG"
-  },
-  email: {
-    name: "Correo Electrónico",
-    example: "examples/email.PNG"
-  },
-  number: {
-    name: "Número",
-    example: "examples/number.PNG"
-  },
-  password: {
-    name: "Contraseña",
-    example: "examples/password.PNG"
-  },
-  range: {
-    name: "Rango",
-    example: "examples/range.PNG"
-  },
-  select: {
-    name: "Selección",
-    example: "examples/select.PNG"
-  },
-  tel: {
-    name: "Teléfono",
-    example: "examples/tel.PNG"
-  },
-  textarea: {
-    name: "Texto Largo",
-    example: "examples/textarea.PNG"
-  }
-}
-
-const t = ref()
+const t = ref<inputType>('text')
 const appUrl = import.meta.env.VITE_APP_URL;
+
+/**
+ * Determina si el tipo de input seleccionado corresponde al listado
+ * proporcionado
+*/
+const isInputType = (... types: inputType[]) => types.includes(t.value)
+
+/**
+ * Retorna un objeto en el que sus llaves son los tipos de input y su valor es
+ * el "nombre" (human friendly)
+*/
 const inputTypes = computed(() =>
   Object.keys(input).reduce((p: {[key: string]: string}, c) => {
     p[c] = input[c as inputType].name
     return p
 }, {}))
 
+/**
+ * Funcion que se ejecuta al completar el formulario de creacion
+*/
 const submitHandler = (data: any) => {
-  console.log(data)
+  console.log(Object.values(data.rules))
 }
 </script>
+
 <template>
   <FormKit
     type="form"
     @submit="submitHandler"
     submit-label="Agregar Pregunta"
   >
-    <FormKit
-      type="text"
-      label="Pregunta"
-      name="question"
-      outer-class="max-w-full"
-      validation="required"
-      help="Escribe la pregunta que desees"
-    />
-    <hr class="my-4">
-    <FormKit
-      type="text"
-      label="Ayuda"
-      name="help"
-      outer-class="max-w-full"
-      help="Un texto corto que guie al encuestado. Esta es la ayuda!"
-    />
-    <hr class="my-4">
-    <FormKit
-      type="text"
-      label="Texto de 'Fondo'"
-      name="placeholder"
-      outer-class="max-w-full"
-      placeholder="Este es el texto de 'Fondo'"
-      help="Texto que se mostrará de fondo cuando el campo está vacío! Aplica a campos de texto."
-    />
-    <hr class="my-4">
+    <!-- Seleccion tipo de pregunta -->
     <section class="grid grid-cols-2">
       <FormKit
         type="radio"
@@ -124,25 +63,70 @@ const submitHandler = (data: any) => {
       </figure>
     </section>
     <hr class="my-4">
-    <OptionList />
+
+    <FormKit
+      type="text"
+      label="Pregunta"
+      name="question"
+      outer-class="max-w-full"
+      validation="required"
+      help="Escribe la pregunta que desees"
+    />
     <hr class="my-4">
     <FormKit
       type="text"
-      label="Valor por defecto"
-      name="default"
+      label="Ayuda"
+      name="help"
       outer-class="max-w-full"
-      help="Este valor se cargará siempre por defecto. Sin embargo, el usuario aún puede editarlo"
+      help="Un texto corto que guie al encuestado. Esta es la ayuda!"
     />
+
+    <template v-if="isInputType('text', 'textarea', 'number', 'password', 'tel')">
+      <hr class="my-4">
+      <FormKit
+        type="text"
+        label="Texto de 'Fondo'"
+        name="placeholder"
+        outer-class="max-w-full"
+        placeholder="Este es el texto de 'Fondo'"
+        help="Texto que se mostrará de fondo cuando el campo está vacío! Aplica a campos de texto."
+      />
+    </template>
+    <!-- Seccion de Opciones -->
+    <template v-if="isInputType('checkbox', 'select', 'radio')">
+      <hr class="my-4">
+      <OptionList />
+    </template>
+
+    <!-- Campos que pueden tener un valor default -->
+    <template v-if="isInputType('text', 'textarea', 'number')">
+      <hr class="my-4">
+      <FormKit
+        type="text"
+        label="Valor por defecto"
+        name="default"
+        outer-class="max-w-full"
+        help="Este valor se cargará siempre por defecto. Sin embargo, el usuario aún puede editarlo"
+      />
+    </template>
+
+    <!-- Campos con confirmacion -->
+    <template v-if="isInputType('email', 'password', 'tel')">
+      <hr class="my-4">
+      <FormKit
+        type="checkbox"
+        label="Requiere Confirmación"
+        name="confirmation"
+        outer-class="max-w-full"
+        help="La respuesta debe ser confirmada por el usuario. Debe escribirla nuevamente."
+      />
+    </template>
+
+    <!-- Reglas de validacion  -->
     <hr class="my-4">
-    <FormKit
-      type="checkbox"
-      label="Requiere Confirmación"
-      name="confirmation"
-      outer-class="max-w-full"
-      help="La respuesta debe ser confirmada por el usuario. Debe escribirla nuevamente."
-    />
-    <hr class="my-4">
-    <Validation />
+    <Validation :type="t" />
+
+    <!-- End -->
     <hr class="my-4">
   </FormKit>
 </template>
