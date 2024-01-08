@@ -63,7 +63,7 @@ const checkRules = ref<validationRule[]>([
     value: 'min',
     label: 'Mínimo',
     help: 'Debe tener un valor mínimo específico. Ej: 1',
-    for: ["number"],
+    for: ["number", "range"],
     params: [{
       type: 'number',
       label: 'Valor Mínimo',
@@ -74,7 +74,7 @@ const checkRules = ref<validationRule[]>([
     value: 'max',
     label: 'Máximo',
     help: 'Debe tener un valor máximo específico. Ej: 500',
-    for: ["number"],
+    for: ["number", "range"],
     params: [{
       type: 'number',
       label: 'Valor Máximo',

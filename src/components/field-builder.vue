@@ -39,9 +39,9 @@ const submitHandler = (data: any) => {
     submit-label="Agregar Pregunta"
   >
     <!-- Seleccion tipo de pregunta -->
-    <section class="grid grid-cols-2">
+    <section class="grid">
       <FormKit
-        type="radio"
+        type="select"
         name="type"
         label="Tipo de Pregunta"
         validation="required"
@@ -51,7 +51,7 @@ const submitHandler = (data: any) => {
       />
       <figure
         v-if="t"
-        class="max-w-[300px] border self-center rounded shadow-xl p-4"
+        class="max-w-[300px] border self-center mx-auto rounded shadow-xl p-4"
       >
         <img
           class="object-cover w-full h-auto"
