@@ -3,10 +3,13 @@ import { input } from "@/inputs"
 import { FormKit } from "@formkit/vue"
 import OptionList from "@/components/options/option-list.vue"
 import Validation from "@/components/options/validation.vue"
-import type { inputType } from "@/types"
+import type { inputType, question } from "@/types"
 
 const t = ref<inputType>('text')
 const appUrl = import.meta.env.VITE_APP_URL;
+const emit = defineEmits<{
+  (e: 'new-question', data: question): void
+}>()
 
 /**
  * Determina si el tipo de input seleccionado corresponde al listado
@@ -27,8 +30,9 @@ const inputTypes = computed(() =>
 /**
  * Funcion que se ejecuta al completar el formulario de creacion
 */
-const submitHandler = (data: any) => {
-  console.log(Object.values(data.rules))
+const submitHandler = (data: question) => {
+  if (data.rules) data.rules = Object.values(data.rules);
+  emit('new-question', data)
 }
 </script>
 
