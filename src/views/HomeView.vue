@@ -8,7 +8,7 @@ const createCharacter = (value: any) => console.log(value)
 </script>
 <template>
   <main class="grid grid-cols-2 h-screen">
-    <section class="p-8 overflow-auto">
+    <section class="p-8 overflow-auto" id="field-builder-container">
       <FieldBuilder @new-question="$data => fields.push($data)"/>
     </section>
 
@@ -27,6 +27,7 @@ const createCharacter = (value: any) => console.log(value)
             :validation="f.rules"
             :options="f.options"
             :label="f.question"
+            :value="f.default"
             :name="`q-${index}`"
           />
           <template v-if="f.confirmation">

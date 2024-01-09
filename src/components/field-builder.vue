@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { input } from "@/inputs"
+import { reset } from '@formkit/core'
 import { FormKit } from "@formkit/vue"
 import OptionList from "@/components/options/option-list.vue"
 import Validation from "@/components/options/validation.vue"
@@ -32,13 +33,19 @@ const inputTypes = computed(() =>
 */
 const submitHandler = (data: question) => {
   if (data.rules) data.rules = Object.values(data.rules);
-  emit('new-question', data)
+  emit('new-question', data);
+  reset('field-builder');
+  document.getElementById('field-builder-container')?.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
 }
 </script>
 
 <template>
   <FormKit
     type="form"
+    id="field-builder"
     @submit="submitHandler"
     submit-label="Agregar Pregunta"
   >

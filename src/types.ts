@@ -26,5 +26,6 @@ export type question = {
     rules?: string | [rule: string, ... params: any[]][],
     options?: FormKitOptionsList,
     placeholder?: string,
-    confirmation?: boolean
+    confirmation?: boolean,
+    default?: string
 }

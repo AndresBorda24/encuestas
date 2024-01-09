@@ -80,7 +80,6 @@ const addItem = async (node: FormKitNode) => {
             class="group self-center px-2 text-sm rounded text-red-500 hover:shadow-inner"
           > <IconTrash class="h-6 group-hover:scale-95" /> </button>
         </div>
-        <button @click="console.log(children)">c</button>
       </FormKit>
     </section>
   </FormKit>
