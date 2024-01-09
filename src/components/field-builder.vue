@@ -1,15 +1,23 @@
 <script setup lang="ts">
 import { input } from "@/inputs"
-import { reset, getNode } from '@formkit/core'
 import { FormKit } from "@formkit/vue"
+import ShortUniqueId from 'short-unique-id'
+import { reset, getNode } from '@formkit/core'
+import type { inputType, question } from "@/types"
+
 import OptionList from "@/components/options/option-list.vue"
 import Validation from "@/components/options/validation.vue"
 
-import type { inputType, question } from "@/types"
+const emit = defineEmits<{
+  (e: 'new-question', data: question): void
+  (e: 'update-question', data: question): void
+}>()
 
 const t = ref<inputType>('text')
 const appUrl = import.meta.env.VITE_APP_URL;
+const { randomUUID } = new ShortUniqueId({ length: 10 });
 const initQuestion: question = {
+  id: '',
   type: 'text',
   question: '',
   help: '',
@@ -19,9 +27,6 @@ const initQuestion: question = {
   confirmation: false,
   default: ''
 }
-const emit = defineEmits<{
-  (e: 'new-question', data: question): void
-}>()
 
 /**
  * Determina si el tipo de input seleccionado corresponde al listado
@@ -39,25 +44,31 @@ const inputTypes = computed(() =>
     return p
 }, {}))
 
-/**
- * Funcion que se ejecuta al completar el formulario de creacion
-*/
+/** Envia el evento correcto dependiendo de la situacion */
+const sendEvent = (data: question) => {
+  if (data.id.length !== 10) {
+    data.id = randomUUID();
+    emit('new-question', data);
+    return;
+  }
+
+  emit('update-question', data);
+}
+
+/** Funcion que se ejecuta al completar el formulario de creacion */
 const submitHandler = (data: question) => {
-  emit('new-question', data);
+  sendEvent(data);
   reset('field-builder');
   document.getElementById('field-builder-container')?.scrollTo({
     top: 0,
-    behavior: "smooth",
+    behavior: "smooth"
   });
 }
 
-/**
- * Provee la opcion de modificar una pregunta ya registrada.
-*/
+/** Provee la opcion de modificar una pregunta ya registrada */
 const setEditQuestion = async (data: question) => {
   const form = getNode('field-builder')
-  form?.input(data)
-  // question.value = data;
+  form?.input({... data})
 }
 
 defineExpose({ setEditQuestion })

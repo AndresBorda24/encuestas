@@ -20,6 +20,7 @@ export type option = {
 }
 
 export type question = {
+    id: string,
     type: inputType,
     question: string,
     help?: string,

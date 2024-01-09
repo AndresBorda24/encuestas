@@ -6,6 +6,15 @@ import type { question } from '@/types';
 const fields = ref<question[]>([])
 const fieldBuilder = ref<InstanceType<typeof FieldBuilder>>()
 const createCharacter = (value: any) => console.log(value)
+
+
+const updateQuestion = (data: question) => {
+  const id = fields.value.findIndex(f => f.id === data.id);
+  if (id === -1) return;
+
+  console.log(fields.value[ id ], data)
+  fields.value[ id ] = data;
+}
 </script>
 <template>
   <main class="grid grid-cols-2 h-screen">
@@ -13,6 +22,7 @@ const createCharacter = (value: any) => console.log(value)
       <FieldBuilder
         ref="fieldBuilder"
         @new-question="$data => fields.push($data)"
+        @update-question="$data => updateQuestion($data)"
       />
     </section>
 
@@ -20,11 +30,10 @@ const createCharacter = (value: any) => console.log(value)
       type="form"
       @submit="createCharacter"
       submit-label="Crear Personaje"
-      #default="{ value }"
     >
       <section class="p-6 grid gap-2 w-full mx-auto bg-gray-50 border rounded overflow-auto">
         <div
-          v-for="(f, index) in fields" :key="index"
+          v-for="f in fields" :key="f.id"
           class="group relative border border-gray-50 rounded p-4 border-dashed  hover:border-teal-500"
         >
           <button
@@ -34,23 +43,23 @@ const createCharacter = (value: any) => console.log(value)
           > Edit </button>
 
           <FormKit
-            :type="f.type as string"
+            :type="f.type"
             :help="f.help"
             :placeholder="f.placeholder"
             :validation="f.rules"
             :options="f.options"
             :label="f.question"
             :value="f.default"
-            :name="`q-${index}`"
+            :name="f.id"
           />
           <template v-if="f.confirmation">
             <FormKit
-              :type="f.type as string"
+              :type="f.type"
               :placeholder="f.placeholder"
               :label="`${f.question} - Confirmación`"
-              :name="`q-${index}-confirmation`"
+              :name="`${f.id}-confirmation`"
               help="Campo de confirmación"
-              :validation="`required|confirm:q-${index}`"
+              :validation="`required|confirm:q-${f.id}`"
               validation-label="Confirmación"
             />
           </template>
