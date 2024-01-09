@@ -68,7 +68,7 @@ const submitHandler = (data: question) => {
 /** Provee la opcion de modificar una pregunta ya registrada */
 const setEditQuestion = async (data: question) => {
   const form = getNode('field-builder')
-  form?.input({... data})
+  await form?.input({... data})
 }
 
 defineExpose({ setEditQuestion })
@@ -81,7 +81,7 @@ defineExpose({ setEditQuestion })
     autocomplete="off"
     :value="initQuestion"
     @submit="submitHandler"
-    submit-label="Agregar Pregunta"
+    submit-label="Guardar !"
   >
     <!-- Seleccion tipo de pregunta -->
     <section class="grid">
