@@ -1,13 +1,24 @@
 <script setup lang="ts">
 import { input } from "@/inputs"
-import { reset } from '@formkit/core'
+import { reset, getNode } from '@formkit/core'
 import { FormKit } from "@formkit/vue"
 import OptionList from "@/components/options/option-list.vue"
 import Validation from "@/components/options/validation.vue"
+
 import type { inputType, question } from "@/types"
 
 const t = ref<inputType>('text')
 const appUrl = import.meta.env.VITE_APP_URL;
+const initQuestion: question = {
+  type: 'text',
+  question: '',
+  help: '',
+  rules: [],
+  options: [],
+  placeholder: '',
+  confirmation: false,
+  default: ''
+}
 const emit = defineEmits<{
   (e: 'new-question', data: question): void
 }>()
@@ -32,7 +43,6 @@ const inputTypes = computed(() =>
  * Funcion que se ejecuta al completar el formulario de creacion
 */
 const submitHandler = (data: question) => {
-  if (data.rules) data.rules = Object.values(data.rules);
   emit('new-question', data);
   reset('field-builder');
   document.getElementById('field-builder-container')?.scrollTo({
@@ -40,12 +50,25 @@ const submitHandler = (data: question) => {
     behavior: "smooth",
   });
 }
+
+/**
+ * Provee la opcion de modificar una pregunta ya registrada.
+*/
+const setEditQuestion = async (data: question) => {
+  const form = getNode('field-builder')
+  form?.input(data)
+  // question.value = data;
+}
+
+defineExpose({ setEditQuestion })
 </script>
 
 <template>
   <FormKit
     type="form"
     id="field-builder"
+    autocomplete="off"
+    :value="initQuestion"
     @submit="submitHandler"
     submit-label="Agregar Pregunta"
   >

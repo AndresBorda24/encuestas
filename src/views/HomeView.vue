@@ -4,12 +4,16 @@ import FieldBuilder from '@/components/field-builder.vue'
 import type { question } from '@/types';
 
 const fields = ref<question[]>([])
+const fieldBuilder = ref<InstanceType<typeof FieldBuilder>>()
 const createCharacter = (value: any) => console.log(value)
 </script>
 <template>
   <main class="grid grid-cols-2 h-screen">
     <section class="p-8 overflow-auto" id="field-builder-container">
-      <FieldBuilder @new-question="$data => fields.push($data)"/>
+      <FieldBuilder
+        ref="fieldBuilder"
+        @new-question="$data => fields.push($data)"
+      />
     </section>
 
     <FormKit
@@ -18,8 +22,17 @@ const createCharacter = (value: any) => console.log(value)
       submit-label="Crear Personaje"
       #default="{ value }"
     >
-      <section class="p-8 w-full mx-auto bg-gray-50 border rounded">
-        <template v-for="(f, index) in fields" :key="index" >
+      <section class="p-6 grid gap-2 w-full mx-auto bg-gray-50 border rounded overflow-auto">
+        <div
+          v-for="(f, index) in fields" :key="index"
+          class="group relative border border-gray-50 rounded p-4 border-dashed  hover:border-teal-500"
+        >
+          <button
+            class="hidden absolute top-1 right-1 bg-teal-500 text-xs px-2 py-1 rounded group-hover:block"
+            type="button"
+            @click="() => fieldBuilder?.setEditQuestion(f)"
+          > Edit </button>
+
           <FormKit
             :type="f.type as string"
             :help="f.help"
@@ -41,7 +54,7 @@ const createCharacter = (value: any) => console.log(value)
               validation-label="Confirmación"
             />
           </template>
-        </template>
+        </div>
       </section>
     </FormKit>
   </main>
