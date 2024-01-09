@@ -36,6 +36,13 @@ const checkRules = ref<validationRule[]>([
     }]
   },
   {
+    value: 'email',
+    label: 'Validar Email',
+    help: 'Se validará que el texto que el usuario escriba sea un correo válido.',
+    for: ["email" ],
+    params: []
+  },
+  {
     value: 'contains_numeric',
     label: 'Debe Contener Números',
     help: 'La respuesta debe contener al menos un número.',
