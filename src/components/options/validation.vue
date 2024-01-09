@@ -128,49 +128,51 @@ const availablesRules = computed(() => checkRules.value.filter(r =>
 </script>
 
 <template>
-  <FormKit type="group" name="rules" >
+  <!-- <FormKit type="group" name="rules" > -->
     <section>
       <span class="font-bold text-sm text-gray-600">Reglas de Validación</span>
       <p class="mb-2 text-sm text-gray-600">
         Estas reglas te permiten establecer cuando una respuesta debe ser aceptada.
       </p>
       <section class="grid divide-y border rounded bg-gray-50">
-        <template v-for="(rule, index) in availablesRules" :key="index" >
-          <FormKit type="list" #default="{ value }">
-            <div class="p-3">
-              <FormKit
-                type="checkbox"
-                name="rule"
-                outer-class="max-w-full"
-                help-class="text-pretty"
-                :on-value="rule.value"
-                :label="rule.label"
-                :help="rule.help"
-              />
-              <div
-                v-if="Boolean(value && value[0])"
-                class="flex gap-1 flex-wrap"
-              >
+        <FormKit type="list" name="rules">
+          <template v-for="(rule, index) in availablesRules" :key="index" >
+            <FormKit type="list" #="{ value }">
+              <div class="p-3">
                 <FormKit
-                  autocomplete="off"
-                  v-for="(param, index) in rule.params" :key="index"
-                  :type="param.type"
-                  outer-class="!mb-0"
-                  :value="param.value"
+                  type="checkbox"
+                  name="rule"
+                  outer-class="max-w-full"
                   help-class="text-pretty"
-                  :label="param.label"
-                  :name="`${param.type}-${index}`"
-                  :validation="param.validation"
-                  :placeholder="param.placeholder"
-                  :help="param.help"
+                  :on-value="rule.value"
+                  :label="rule.label"
+                  :help="rule.help"
                 />
+                <div
+                  v-if="Boolean(value && value[0])"
+                  class="flex gap-1 flex-wrap"
+                >
+                  <FormKit
+                    autocomplete="off"
+                    v-for="(param, index) in rule.params" :key="index"
+                    :type="param.type"
+                    outer-class="!mb-0"
+                    :value="param.value"
+                    help-class="text-pretty"
+                    :label="param.label"
+                    :name="`${param.type}-${index}`"
+                    :validation="param.validation"
+                    :placeholder="param.placeholder"
+                    :help="param.help"
+                  />
+                </div>
               </div>
-            </div>
-          </FormKit>
-        </template>
+            </FormKit>
+          </template>
+        </FormKit>
 
       </section>
     </section>
 
-  </FormKit>
+  <!-- </FormKit> -->
 </template>
