@@ -13,8 +13,10 @@
   "dependencies": {
     "@formkit/vue": "^1.4.0",
     "@vueuse/core": "^10.7.1",
+    "@vueuse/integrations": "^10.7.1",
     "pinia": "^2.1.7",
     "short-unique-id": "^5.0.3",
+    "sortablejs": "^1.15.1",
     "vue": "^3.3.11",
     "vue-router": "^4.2.5"
   },

@@ -1,13 +1,18 @@
 <script setup lang="ts">
 import { FormKit } from '@formkit/vue'
 import FieldBuilder from '@/components/field-builder.vue'
+import { useSortable } from '@vueuse/integrations/useSortable'
+import { useLocalStorage } from '@vueuse/core';
 import type { question } from '@/types';
 
 import IconEdit from '@/components/icons/icon-edit.vue'
 import IconCopy from '@/components/icons/icon-copy.vue'
 import IconTrash from '@/components/icons/icon-trash.vue'
+import IconMove from '@/components/icons/icon-move.vue'
 
-const fields = ref<question[]>([])
+const fields = useLocalStorage<question[]>('form-questions', [])
+// const fields = ref<question[]>([])
+const container = ref<HTMLElement | null>()
 const fieldBuilder = ref<InstanceType<typeof FieldBuilder>>()
 const createCharacter = (value: any) => console.log(value)
 
@@ -26,6 +31,13 @@ const updateQuestion = (data: question) => {
   if (id === -1) return;
   fields.value[ id ] = data;
 }
+
+/** Para Ordenar el listado de preguntas */
+useSortable(container, fields, {
+  handle: '.move-handle',
+  animation: 200,
+  ghostClass: 'bg-teal-500/20'
+});
 </script>
 <template>
   <main class="grid grid-cols-2 h-screen">
@@ -42,13 +54,19 @@ const updateQuestion = (data: question) => {
       @submit="createCharacter"
       form-class="overflow-auto"
       submit-label="Guardar"
+      #="{ value }"
     >
-      <section class="p-6 grid gap-2 w-full mx-auto bg-gray-50 border rounded overflow-auto">
+      <section
+        ref="container"
+        id="form-questions-container"
+        class="p-6 grid gap-2 w-full mx-auto bg-gray-50 border rounded overflow-auto"
+      >
         <div
           v-for="f in fields" :key="f.id"
           class="group relative border border-gray-50 rounded p-4 border-dashed  hover:border-teal-500"
         >
-          <div class="absolute hidden group-hover:flex gap-2 top-0 right-0 pt-1 pr-1">
+          <div class="absolute w-full hidden group-hover:flex gap-2 top-0 right-0 pt-1 pr-1">
+            <IconMove class="move-handle h-4 block mr-auto p-0.5 cursor-all-scroll text-teal-500" />
             <button
               class="flex items-center gap-1 text-white bg-teal-500 text-xs px-2 py-0 rounded hover:bg-teal-600"
               type="button"
@@ -83,7 +101,14 @@ const updateQuestion = (data: question) => {
             :label="f.question"
             :value="f.default"
             :name="f.id"
-          />
+          >
+            <template v-if="f.type === 'range'" #prefix>
+              <span class="px-2">0</span>
+            </template>
+            <template v-if="f.type === 'range'" #suffix>
+              <span class="px-2">{{ value && value[f.id] }}</span>
+            </template>
+          </FormKit>
           <template v-if="f.confirmation">
             <FormKit
               :type="f.type"
