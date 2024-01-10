@@ -2,25 +2,25 @@
 import { FormKit } from '@formkit/vue';
 import type { inputType } from '@/types';
 
-const props = defineProps<{
-  type?: inputType
-}>()
+const props = defineProps<{ type?: inputType }>()
 
 type validationRule = {
   value: string,
   label: string,
   help: string,
   for: inputType[],
+  requiredFor: inputType[],
   params: {
     type: string,
     value?: string,
     label?: string,
-    validation?: string | [rule: string, ... params: any[]][]
-    placeholder?: string
+    validation?: string | [rule: string, ... params: any[]][],
+    placeholder?: string,
     help?: string
   }[]
 }
 
+/** Definicion de las reglas de validacion */
 const checkRules = ref<validationRule[]>([
   {
     value: 'required',
@@ -30,6 +30,7 @@ const checkRules = ref<validationRule[]>([
       "radio", "checkbox", "text", "date", "color", "email", "number", "password",
       "range", "select", "tel", "textarea"
     ],
+    requiredFor: [],
     params: [{
       type: 'hidden',
       value: 'trim'
@@ -40,6 +41,7 @@ const checkRules = ref<validationRule[]>([
     label: 'Validar Email',
     help: 'Se validará que el texto que el usuario escriba sea un correo válido.',
     for: ["email" ],
+    requiredFor: ["email"],
     params: []
   },
   {
@@ -47,6 +49,7 @@ const checkRules = ref<validationRule[]>([
     label: 'Debe Contener Números',
     help: 'La respuesta debe contener al menos un número.',
     for: ["text", "textarea", "password"],
+    requiredFor: [],
     params: []
   },
   {
@@ -54,6 +57,7 @@ const checkRules = ref<validationRule[]>([
     label: 'Longitud de Texto',
     help: 'El campo debe tener una longitud entre dos valores. Ej: 100,500',
     for: ["text", "textarea", "password"],
+    requiredFor: [],
     params: [{
       type: 'number',
       label: 'Valor Mínimo',
@@ -71,6 +75,7 @@ const checkRules = ref<validationRule[]>([
     label: 'Mínimo',
     help: 'Debe tener un valor mínimo específico. Ej: 1',
     for: ["number", "range"],
+    requiredFor: ["range"],
     params: [{
       type: 'number',
       label: 'Valor Mínimo',
@@ -82,6 +87,7 @@ const checkRules = ref<validationRule[]>([
     label: 'Máximo',
     help: 'Debe tener un valor máximo específico. Ej: 500',
     for: ["number", "range"],
+    requiredFor: ["range"],
     params: [{
       type: 'number',
       label: 'Valor Máximo',
@@ -105,6 +111,7 @@ const checkRules = ref<validationRule[]>([
     label: '"Antes de"',
     help: 'La fecha debe ser anterior de la establecida.',
     for: ["date"],
+    requiredFor: [],
     params: [{
       type: 'date',
       validation: 'required'
@@ -115,6 +122,7 @@ const checkRules = ref<validationRule[]>([
     label: '"Despues de"',
     help: 'La fecha debe ser despúes de la establecida.',
     for: ["date"],
+    requiredFor: [],
     params: [{
       type: 'date',
       validation: 'required'
@@ -122,8 +130,8 @@ const checkRules = ref<validationRule[]>([
   }
 ])
 
-const availablesRules = computed(() => checkRules.value.filter(r =>
-  r.for.includes(props.type)
+const availablesRules = computed(() =>
+  checkRules.value.filter(r => props.type && r.for.includes(props.type)
 ))
 </script>
 
@@ -140,11 +148,15 @@ const availablesRules = computed(() => checkRules.value.filter(r =>
             <FormKit type="list" #="{ value }">
               <div class="p-3">
                 <FormKit
-                  type="checkbox"
                   name="rule"
+                  type="checkbox"
                   outer-class="max-w-full"
                   help-class="text-pretty"
                   :on-value="rule.value"
+                  :validation="(type && rule.requiredFor.includes(type)) ? `is:${rule.value}` : []"
+                  :validation-messages="{
+                    is: 'Esta validación es requerida con el tipo de pregunta seleccionada'
+                  }"
                   :label="rule.label"
                   :help="rule.help"
                 />
@@ -170,9 +182,6 @@ const availablesRules = computed(() => checkRules.value.filter(r =>
             </FormKit>
           </template>
         </FormKit>
-
       </section>
     </section>
-
-  <!-- </FormKit> -->
 </template>

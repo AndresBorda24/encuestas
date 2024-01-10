@@ -68,7 +68,7 @@ const submitHandler = (data: question) => {
 /** Provee la opcion de modificar una pregunta ya registrada */
 const setEditQuestion = async (data: question) => {
   const form = getNode('field-builder')
-  await form?.input({... data})
+  await form?.input(JSON.parse(JSON.stringify(data)))
 }
 
 defineExpose({ setEditQuestion })

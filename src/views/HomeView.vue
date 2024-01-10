@@ -5,13 +5,15 @@ import { useSortable } from '@vueuse/integrations/useSortable'
 import { useLocalStorage } from '@vueuse/core';
 import type { question } from '@/types';
 
-import IconEdit from '@/components/icons/icon-edit.vue'
-import IconCopy from '@/components/icons/icon-copy.vue'
-import IconTrash from '@/components/icons/icon-trash.vue'
-import IconMove from '@/components/icons/icon-move.vue'
+import IconEdit from '@/components/icons/icon-edit.vue';
+import IconCopy from '@/components/icons/icon-copy.vue';
+import IconTrash from '@/components/icons/icon-trash.vue';
+import IconMove from '@/components/icons/icon-move.vue';
+
+import InputRange from '@/components/input-range.vue';
+import InputGlobal from '@/components/input-global.vue'
 
 const fields = useLocalStorage<question[]>('form-questions', [])
-// const fields = ref<question[]>([])
 const container = ref<HTMLElement | null>()
 const fieldBuilder = ref<InstanceType<typeof FieldBuilder>>()
 const createCharacter = (value: any) => console.log(value)
@@ -92,33 +94,12 @@ useSortable(container, fields, {
             </details>
           </div>
 
-          <FormKit
-            :type="f.type"
-            :help="f.help"
-            :placeholder="f.placeholder"
-            :validation="f.rules"
-            :options="f.options"
-            :label="f.question"
-            :value="f.default"
-            :name="f.id"
-          >
-            <template v-if="f.type === 'range'" #prefix>
-              <span class="px-2">0</span>
-            </template>
-            <template v-if="f.type === 'range'" #suffix>
-              <span class="px-2">{{ value && value[f.id] }}</span>
-            </template>
-          </FormKit>
-          <template v-if="f.confirmation">
-            <FormKit
-              :type="f.type"
-              :placeholder="f.placeholder"
-              :label="`${f.question} - Confirmación`"
-              :name="`${f.id}-confirmation`"
-              help="Campo de confirmación"
-              :validation="`required|confirm:${f.id}`"
-              validation-label="Confirmación"
-            />
+          <template v-if="f.type == 'range'">
+            <InputRange :q="f" :value="value && value[f.id]"/>
+          </template>
+
+          <template v-else>
+            <InputGlobal :q="f" />
           </template>
         </div>
       </section>
