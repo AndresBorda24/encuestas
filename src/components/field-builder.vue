@@ -3,6 +3,7 @@ import { input } from "@/inputs"
 import { FormKit } from "@formkit/vue"
 import ShortUniqueId from 'short-unique-id'
 import { reset, getNode } from '@formkit/core'
+import { useNProgress } from '@vueuse/integrations/useNProgress'
 import type { inputType, question } from "@/types"
 
 import OptionList from "@/components/options/option-list.vue"
@@ -14,6 +15,7 @@ const emit = defineEmits<{
 }>()
 
 const t = ref<inputType>('text')
+const { isLoading } = useNProgress()
 const appUrl = import.meta.env.VITE_APP_URL;
 const { randomUUID } = new ShortUniqueId({ length: 10 });
 const initQuestion: question = {
@@ -67,8 +69,10 @@ const submitHandler = (data: question) => {
 
 /** Provee la opcion de modificar una pregunta ya registrada */
 const setEditQuestion = async (data: question) => {
+  isLoading.value = true;
   const form = getNode('field-builder')
   await form?.input(JSON.parse(JSON.stringify(data)))
+  isLoading.value = false;
 }
 
 defineExpose({ setEditQuestion })
@@ -84,7 +88,7 @@ defineExpose({ setEditQuestion })
     submit-label="Guardar !"
   >
     <!-- Seleccion tipo de pregunta -->
-    <section class="grid">
+    <section class="grid grid-cols-2">
       <FormKit
         type="select"
         name="type"
@@ -107,7 +111,6 @@ defineExpose({ setEditQuestion })
         >Ejemplo del tipo de pregunta</figcaption>
       </figure>
     </section>
-    <hr class="my-4">
 
     <FormKit
       type="text"
@@ -117,7 +120,7 @@ defineExpose({ setEditQuestion })
       validation="required"
       help="Escribe la pregunta que desees"
     />
-    <hr class="my-4">
+
     <FormKit
       type="text"
       label="Ayuda"
@@ -126,38 +129,39 @@ defineExpose({ setEditQuestion })
       help="Un texto corto que guie al encuestado. Esta es la ayuda!"
     />
 
-    <template v-if="isInputType('text', 'textarea', 'number', 'password', 'tel')">
-      <hr class="my-4">
-      <FormKit
-        type="text"
-        label="Texto de 'Fondo'"
-        name="placeholder"
-        outer-class="max-w-full"
-        placeholder="Este es el texto de 'Fondo'"
-        help="Texto que se mostrará de fondo cuando el campo está vacío! Aplica a campos de texto."
-      />
-    </template>
-    <!-- Seccion de Opciones -->
-    <template v-if="isInputType('checkbox', 'select', 'radio')">
-      <hr class="my-4">
-      <OptionList />
-    </template>
+    <div
+      v-if="isInputType('text', 'textarea', 'number', 'password', 'tel')"
+      class="grid grid-cols-2 gap-2"
+    >
+      <template v-if="isInputType('text', 'textarea', 'number', 'password', 'tel')">
+        <FormKit
+          type="text"
+          label="Texto de 'Fondo'"
+          name="placeholder"
+          outer-class="max-w-full"
+          placeholder="Este es el texto de 'Fondo'"
+          help="Texto que se mostrará de fondo cuando el campo está vacío! Aplica a campos de texto."
+        />
+      </template>
+      <!-- Campos que pueden tener un valor default -->
+      <template v-if="isInputType('text', 'textarea', 'number')">
+        <FormKit
+          type="text"
+          label="Valor por defecto"
+          name="default"
+          outer-class="max-w-full"
+          help="Este valor se cargará siempre por defecto. Sin embargo, el usuario aún puede editarlo"
+        />
+      </template>
+    </div>
 
-    <!-- Campos que pueden tener un valor default -->
-    <template v-if="isInputType('text', 'textarea', 'number')">
-      <hr class="my-4">
-      <FormKit
-        type="text"
-        label="Valor por defecto"
-        name="default"
-        outer-class="max-w-full"
-        help="Este valor se cargará siempre por defecto. Sin embargo, el usuario aún puede editarlo"
-      />
-    </template>
+    <!-- Seccion de Opciones -->
+    <div v-if="isInputType('checkbox', 'select', 'radio')">
+      <OptionList />
+    </div>
 
     <!-- Campos con confirmacion -->
     <template v-if="isInputType('email', 'password', 'tel')">
-      <hr class="my-4">
       <FormKit
         type="checkbox"
         label="Requiere Confirmación"
@@ -168,10 +172,18 @@ defineExpose({ setEditQuestion })
     </template>
 
     <!-- Reglas de validacion  -->
-    <hr class="my-4">
     <Validation :type="t" />
-
     <!-- End -->
-    <hr class="my-4">
   </FormKit>
 </template>
+
+<style>
+  #field-builder > *::after {
+    content: '';
+    display: block;
+    grid-column: 1 / -1;
+    width: 100%;
+    margin: 1.5rem 0;
+    border-top: 1px solid #dfdfdf;
+  }
+</style>

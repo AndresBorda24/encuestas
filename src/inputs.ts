@@ -29,10 +29,10 @@ export const input: { [k in inputType] : { name: string, example: string } } = {
     name: "Número",
     example: "examples/number.PNG"
   },
-  password: {
-    name: "Contraseña",
-    example: "examples/password.PNG"
-  },
+  // password: {
+  //   name: "Contraseña",
+  //   example: "examples/password.PNG"
+  // },
   range: {
     name: "Rango",
     example: "examples/range.PNG"

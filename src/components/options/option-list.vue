@@ -12,10 +12,11 @@ const addItem = async (node: FormKitNode) => {
   await node.input(data.concat({ value: '', label: '', help: '' }));
   await nextTick();
 
-  if (!container.value) return;
+  if (container.value == null) return;
   // Hacemos scroll hasta el final de la lista y focus
-  container.value.scrollTop = (node.children.length * 95);
-  (container.value.querySelector('.option-item:last-of-type input') as HTMLElement)?.focus()
+  setTimeout(() =>
+    (container.value?.querySelector('.option-item:last-of-type input') as HTMLElement)?.focus()
+  , 10)
 }
 </script>
 
@@ -34,14 +35,8 @@ const addItem = async (node: FormKitNode) => {
     dynamic
     type="list"
     name="options"
-    :value="[{ value: '', label: '', help: '' }]"
     #default="{ items, node, value }"
   >
-   <button
-      type="button"
-      @click="addItem(node)"
-      class="block border border-teal-600 text-teal-600 hover:bg-teal-600 hover:text-white p-1 rounded text-xs font-normal ms-auto mb-2"
-    > + Nueva Opción </button>
     <section
       ref="container"
       class="border p-4 max-h-[400px] overflow-auto rounded bg-gray-50 option-container"
@@ -55,33 +50,40 @@ const addItem = async (node: FormKitNode) => {
         <div class="flex p-1 option-item items-start">
           <span class="p-3">{{ index + 1 }}) </span>
           <div class="flex flex-1 flex-col gap-0">
-            <FormKit type="hidden" name="value" />
             <FormKit
               type="text"
-              @input="(_v) => children[0].input(_v)"
+              @input="(_v) => children[2].input(_v)"
               name="label"
               placeholder="Requerido"
               validation="required:trim"
-              wrapper-class="$reset mb-1 grid grid-cols-[2fr_10fr] gap-2 items-center"
+              outer-class="!mb-1"
               label="Opción"
             />
             <FormKit
-              label="Ayuda"
               type="text"
-              placeholder="Opcional"
+              placeholder="Texto de ayuda"
               name="help"
-              wrapper-class="$reset mb-1 grid grid-cols-[2fr_10fr] gap-2 items-center"
+              wrapper-class="$reset mb-1 items-center"
+              inner-class="!py-0.5 !px-2"
+              input-class="text-xs !text-gray-500"
             />
+            <FormKit type="hidden" name="value" />
           </div>
           <button
             type="button"
             title="Eliminar Opción"
             @click="() => node.input(value?.filter((_, i) => i !== index))"
-            class="group self-center px-2 text-sm rounded text-red-500 hover:shadow-inner"
-          > <IconTrash class="h-6 group-hover:scale-95" /> </button>
+            class="group self-center px-1 text-sm rounded text-red-500 hover:shadow-inner"
+          > <IconTrash class="h-4 group-hover:scale-95" /> </button>
         </div>
       </FormKit>
     </section>
+
+    <button
+      type="button"
+      @click="addItem(node)"
+      class="block border border-teal-600 text-teal-600 hover:bg-teal-600 hover:text-white p-1 rounded text-xs font-normal ms-auto mt-2"
+    > + Nueva Opción </button>
   </FormKit>
 </template>
 

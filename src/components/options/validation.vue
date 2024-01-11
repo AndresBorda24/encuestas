@@ -12,7 +12,7 @@ type validationRule = {
   requiredFor: inputType[],
   params: {
     type: string,
-    value?: string,
+    value?: string | RegExp,
     label?: string,
     validation?: string | [rule: string, ... params: any[]][],
     placeholder?: string,
@@ -35,24 +35,31 @@ const checkRules = ref<validationRule[]>([
       type: 'hidden',
       value: 'trim'
     }]
-  },
-  {
+  }, {
+    value: 'matches',
+    label: 'Número de Teléfono',
+    help: 'El teléfono escrito por el usuario debe ser de formato valido.',
+    for: ["tel"],
+    requiredFor: ["tel"],
+    params: [{
+      type: 'hidden',
+      value: /3[0-2]{1}[0-9]{8}/
+    }]
+  }, {
     value: 'email',
     label: 'Validar Email',
     help: 'Se validará que el texto que el usuario escriba sea un correo válido.',
     for: ["email" ],
     requiredFor: ["email"],
     params: []
-  },
-  {
+  }, {
     value: 'contains_numeric',
     label: 'Debe Contener Números',
     help: 'La respuesta debe contener al menos un número.',
     for: ["text", "textarea", "password"],
     requiredFor: [],
     params: []
-  },
-  {
+  }, {
     value: 'length',
     label: 'Longitud de Texto',
     help: 'El campo debe tener una longitud entre dos valores. Ej: 100,500',
@@ -69,8 +76,7 @@ const checkRules = ref<validationRule[]>([
       placeholder: 'Máximo',
       validation: 'required:trim|number'
     }]
-  },
-  {
+  }, {
     value: 'min',
     label: 'Mínimo',
     help: 'Debe tener un valor mínimo específico. Ej: 1',
@@ -81,8 +87,7 @@ const checkRules = ref<validationRule[]>([
       label: 'Valor Mínimo',
       validation: 'required:trim|number'
     }]
-  },
-  {
+  }, {
     value: 'max',
     label: 'Máximo',
     help: 'Debe tener un valor máximo específico. Ej: 500',
@@ -116,8 +121,7 @@ const checkRules = ref<validationRule[]>([
       type: 'date',
       validation: 'required'
     }]
-  },
-  {
+  }, {
     value: 'date_after',
     label: '"Despues de"',
     help: 'La fecha debe ser despúes de la establecida.',
@@ -153,9 +157,10 @@ const availablesRules = computed(() =>
                   outer-class="max-w-full"
                   help-class="text-pretty"
                   :on-value="rule.value"
-                  :validation="(type && rule.requiredFor.includes(type)) ? `is:${rule.value}` : []"
+                  :validation="(type && rule.requiredFor.includes(type)) ? `required|is:${rule.value}` : []"
                   :validation-messages="{
-                    is: 'Esta validación es requerida con el tipo de pregunta seleccionada'
+                    is: 'Esta validación es requerida con el tipo de pregunta seleccionada',
+                    required: 'Esta validación es requerida con el tipo de pregunta seleccionada'
                   }"
                   :label="rule.label"
                   :help="rule.help"
