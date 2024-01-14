@@ -6,6 +6,7 @@ export type inputType = "radio"
     | "date"
     | "color"
     | "email"
+    | "group"
     | "number"
     | "password"
     | "range"
@@ -23,6 +24,8 @@ export type question = {
     id: string,
     type: inputType,
     question: string,
+    questions?: question[],
+    group?: string,
     help?: string,
     rules?: string | [rule: string, ... params: any[]][],
     options?: FormKitOptionsList,

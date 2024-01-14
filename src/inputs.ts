@@ -25,6 +25,10 @@ export const input: { [k in inputType] : { name: string, example: string } } = {
     name: "Correo Electrónico",
     example: "examples/email.PNG"
   },
+  group: {
+    name: "Sección",
+    example: "examples/email.PNG"
+  },
   number: {
     name: "Número",
     example: "examples/number.PNG"
