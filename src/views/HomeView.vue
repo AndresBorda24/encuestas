@@ -12,10 +12,8 @@ const { newQuestion } = useBuilderStore();
 </script>
 
 <template>
-  <main class="max-h-screen relative overflow-auto">
-    <section class="hidden p-8 overflow-auto relative" id="field-builder-container">
-      <FieldBuilder ref="fieldBuilder" />
-    </section>
+  <main class="max-h-screen relative overflow-auto p-4">
+    <FieldBuilder ref="fieldBuilder" />
 
     <FormKit
       type="form"

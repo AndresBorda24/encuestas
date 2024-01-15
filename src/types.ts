@@ -4,11 +4,9 @@ export type inputType = "radio"
     | "checkbox"
     | "text"
     | "date"
-    | "color"
     | "email"
     | "group"
     | "number"
-    | "password"
     | "range"
     | "select"
     | "tel"
@@ -33,3 +31,20 @@ export type question = {
     confirmation?: boolean,
     default?: string
 }
+
+export type validationRule = {
+  value: string,
+  label: string,
+  help: string,
+  for: inputType[],
+  requiredFor: inputType[],
+  params: {
+    type: string,
+    value?: string | RegExp,
+    label?: string,
+    validation?: string | [rule: string, ... params: any[]][],
+    placeholder?: string,
+    help?: string
+  }[]
+}
+
