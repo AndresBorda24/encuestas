@@ -11,7 +11,7 @@ import Basic from "@/components/builder-steps/basic.vue"
 import Options from "@/components/builder-steps/options.vue"
 import Validation from "@/components/builder-steps/validation.vue"
 
-const { addQuestion, updateQuestion } = useQuestionsStore();
+const { addQuestion, updateQuestion, groups } = useQuestionsStore();
 const { visible, baseQuestion } = storeToRefs( useBuilderStore() );
 const { randomUUID } = new ShortUniqueId({ length: 10 });
 
@@ -55,18 +55,30 @@ const closeModal = () => {
           :config="{ validationVisibility: 'submit' }"
           #="{ value }"
         >
-          <div class="sticky top-0 z-10 -mb-3">
-            <button
-              @click="closeModal"
-              class="rounded-full hover:bg-black/10 p-2 absolute top-1 right-1"
-            > <IconClose class="h-4 w-4" /> </button>
-
+          <div class="sticky flex items-start top-0 z-10 border-b bg-white p-1">
             <span
-              :class="[' text-xs font-medium me-2 px-2.5 py-0.5 rounded', {
+              :class="[' text-xs font-medium me-2 px-2.5 py-0.5 rounded mt-2', {
                 'bg-yellow-200 text-yellow-800': value && value.id,
                 'bg-teal-200 text-teal-800': !value || !value.id
               }]"
             >{{ (value && value.id) ? 'Editando' : 'Creando' }}</span>
+
+            <FormKit
+              type="select"
+              name="group"
+              help="Grupo al que deseas agregar esta pregunta"
+              outer-class="!mb-0"
+              :options="[
+                { value: '', label: 'Ningúno' },
+                ...groups.map(g => ({ value: g.id, label: g.question }))
+              ]"
+            />
+
+            <button
+              @click="closeModal"
+              title="Cerrar"
+              class="rounded-full hover:bg-black/10 p-2 m-1"
+            > <IconClose class="h-4 w-4" /> </button>
           </div>
 
           <Basic :questionType="(value && value.type) as inputType"/>

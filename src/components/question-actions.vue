@@ -23,7 +23,7 @@ const { setQuestion, newQuestion } = useBuilderStore();
       v-if="question.type == 'group'"
       type="button"
       class="flex items-center gap-1 text-white bg-green-500 text-xs px-2 py-0 rounded hover:bg-green-600"
-      @click="newQuestion()"
+      @click="newQuestion(question.id)"
     > Agregar Pregunta <IconPlus class="w-4 inline" /> </button>
 
     <button
