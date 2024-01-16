@@ -32,7 +32,7 @@ const inputTypes = computed(() =>
     />
 
     <template v-if="questionType === 'group'">
-      <div class="p-4 mb-4 text-xs text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400" role="alert">
+      <div class="p-4 text-xs text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400" role="alert">
         <span class="font-medium">Las secciones te permiten <span class="font-bold">agrupar</span> preguntas. Además puedes establecer un título y una descripción que ayude al usuario.</span>
       </div>
     </template>

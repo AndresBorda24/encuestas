@@ -8,7 +8,7 @@ export const useBuilderStore = defineStore('builder', () => {
     const baseQuestion: question = {
       id: '',
       type: 'text',
-      group: '',
+      groupId: '',
       question: '',
       help: '',
       rules: [],
@@ -27,10 +27,14 @@ export const useBuilderStore = defineStore('builder', () => {
       isLoading.value = true;
       const d = JSON.parse(JSON.stringify(question));
       if (isCopy) d.id = "";
-      const form = getNode('field-builder');
-      await form?.input(d);
+      await setFormValue(d);
       visible.value = true;
       isLoading.value = false;
+    };
+
+    const setFormValue = async (question: question) => {
+      const form = getNode('field-builder');
+      await form?.input(question);
     };
 
     /**
@@ -38,9 +42,9 @@ export const useBuilderStore = defineStore('builder', () => {
     */
     const newQuestion = async (groupId?: string) => {
       const x = {...baseQuestion};
-      if ( groupId ) x.group = groupId;
+      if ( groupId ) x.groupId = groupId;
       setQuestion(x, false);
     }
 
-    return { visible, setQuestion, newQuestion, baseQuestion };
+    return { visible, setQuestion, newQuestion, baseQuestion, setFormValue };
 });

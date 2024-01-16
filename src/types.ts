@@ -23,7 +23,7 @@ export type question = {
     type: inputType,
     question: string,
     questions?: question[],
-    group?: string,
+    groupId?: string,
     help?: string,
     rules?: string | [rule: string, ... params: any[]][],
     options?: FormKitOptionsList,

@@ -47,6 +47,7 @@ const addItem = async (node: FormKitNode) => {
           v-for="(item, index) in items"
           :key="item"
           :index="index"
+          :name="`${option}-${index}`"
           #default="{ node: { children } }"
         >
           <div class="flex p-1 option-item items-start">

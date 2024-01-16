@@ -3,18 +3,27 @@ import { useLocalStorage } from '@vueuse/core';
 
 export const useQuestionsStore = defineStore('questions', () => {
     const questions = useLocalStorage<question[]>('form-questions', []);
-    const groups = computed(() => questions.value.filter(q => (q.type === 'group')));
 
+    /** Retorna todas las preguntas que son un grupo en formato { id: nombre } */
+    const groups = computed(() => {
+      let x: {[k: string]: string} = { "xx": "Ninguno" };
+      questions.value.map((q) => {
+        if (q.type === 'group') x[q.id] = q.question;
+      });
+      return x;
+    });
+
+    /** Retorna el listado de preguntas en el formato adecuado. */
     const questionsList = computed({
       get() {
         const x = (JSON.parse(JSON.stringify(questions.value)) as question[])
           .reduce((a: { [k: string]: question }, q) => {
-            if (q.group) {
-              if (!Boolean(a[q.group].questions)) a[q.group].questions = [];
-              a[q.group].questions?.push(q);
+            if (q.groupId) {
+              if (!Boolean(a[q.groupId].questions)) a[q.groupId].questions = [];
+              a[q.groupId].questions?.push(q);
               return a;
             }
-            a[q.id] = q
+            a[q.id] = q;
             return a;
           }, {});
 
@@ -51,7 +60,7 @@ export const useQuestionsStore = defineStore('questions', () => {
             type: c.type,
             question: c.question,
             questions: [],
-            group: c.group,
+            groupId: c.groupId,
             help: c.help,
             rules: c.rules,
             options: c.options,

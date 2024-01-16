@@ -54,7 +54,7 @@ const { newQuestion } = useBuilderStore();
 
     <button
       type="button"
-      @click="newQuestion"
+      @click="newQuestion(undefined)"
       class="sticky bottom-3 ml-auto mr-4 shadow-lg flex items-center gap-1 text-white bg-green-500 text-sm px-3 py-2 rounded hover:bg-green-600"
     > Agregar Pregunta <IconPlus class="w-4 inline" /> </button>
   </main>

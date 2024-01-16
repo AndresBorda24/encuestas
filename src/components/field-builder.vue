@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { reset } from '@formkit/core'
-import { FormKit } from "@formkit/vue"
-import ShortUniqueId from 'short-unique-id'
-import { useBuilderStore } from '@/stores/builder'
-import { useQuestionsStore } from '@/stores/questions'
-import type { question, inputType } from "@/types"
+import { reset } from '@formkit/core';
+import { FormKit } from "@formkit/vue";
+import ShortUniqueId from 'short-unique-id';
+import { useBuilderStore } from '@/stores/builder';
+import { useQuestionsStore } from '@/stores/questions';
+import type { question, inputType } from "@/types";
 
-import IconClose  from "@/components/icons/icon-close.vue"
-import Basic from "@/components/builder-steps/basic.vue"
-import Options from "@/components/builder-steps/options.vue"
-import Validation from "@/components/builder-steps/validation.vue"
+import IconClose  from "@/components/icons/icon-close.vue";
+import Basic from "@/components/builder-steps/basic.vue";
+import Options from "@/components/builder-steps/options.vue";
+import Validation from "@/components/builder-steps/validation.vue";
 
 const { groups } = storeToRefs(useQuestionsStore());
 const { addQuestion, updateQuestion } = useQuestionsStore();
-const { visible, baseQuestion } = storeToRefs( useBuilderStore() );
+const { visible, baseQuestion } = storeToRefs(useBuilderStore());
 const { randomUUID } = new ShortUniqueId({ length: 10 });
 
 /** Actualiza o inserta una nueva pregunta */
@@ -28,8 +28,6 @@ const updateOrCreateQuestion = (data: question) => {
 
 /** Funcion que se ejecuta al completar el formulario de creacion */
 const submitHandler = (data: question) => {
-  data.group = data.group_;
-  delete data.group_;
   updateOrCreateQuestion(data);
   closeModal();
 }
@@ -51,7 +49,7 @@ const closeModal = () => {
           type="form"
           id="field-builder"
           autocomplete="off"
-          :value="baseQuestion"
+          :value="useBuilderStore().baseQuestion"
           @submit="submitHandler"
           form-class="grid gap-12"
           submit-label="Guardar !"
@@ -68,13 +66,11 @@ const closeModal = () => {
 
             <FormKit
               type="select"
-              name="group_"
+              name="groupId"
+              value=""
               help="Grupo al que deseas agregar esta pregunta"
               outer-class="!mb-0"
-              :options="[
-                { value: '', label: 'Ningúno' },
-                ...groups.map(g => ({ value: g.id, label: g.question }))
-              ]"
+              :options="groups"
             />
 
             <button
