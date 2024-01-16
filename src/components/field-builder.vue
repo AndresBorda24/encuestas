@@ -11,7 +11,8 @@ import Basic from "@/components/builder-steps/basic.vue"
 import Options from "@/components/builder-steps/options.vue"
 import Validation from "@/components/builder-steps/validation.vue"
 
-const { addQuestion, updateQuestion, groups } = useQuestionsStore();
+const { groups } = storeToRefs(useQuestionsStore());
+const { addQuestion, updateQuestion } = useQuestionsStore();
 const { visible, baseQuestion } = storeToRefs( useBuilderStore() );
 const { randomUUID } = new ShortUniqueId({ length: 10 });
 
@@ -19,7 +20,7 @@ const { randomUUID } = new ShortUniqueId({ length: 10 });
 const updateOrCreateQuestion = (data: question) => {
   if (! Boolean(data.id) || data.id.length !== 10) {
     data.id = randomUUID();
-    addQuestion(data)
+    addQuestion(data);
     return;
   }
   updateQuestion(data);
@@ -27,6 +28,8 @@ const updateOrCreateQuestion = (data: question) => {
 
 /** Funcion que se ejecuta al completar el formulario de creacion */
 const submitHandler = (data: question) => {
+  data.group = data.group_;
+  delete data.group_;
   updateOrCreateQuestion(data);
   closeModal();
 }
@@ -50,12 +53,12 @@ const closeModal = () => {
           autocomplete="off"
           :value="baseQuestion"
           @submit="submitHandler"
-          form-class="grid gap-8"
+          form-class="grid gap-12"
           submit-label="Guardar !"
           :config="{ validationVisibility: 'submit' }"
           #="{ value }"
         >
-          <div class="sticky flex items-start top-0 z-10 border-b bg-white p-1">
+          <div class="sticky flex -mb-4  items-start top-0 z-10 border-b bg-white p-1">
             <span
               :class="[' text-xs font-medium me-2 px-2.5 py-0.5 rounded mt-2', {
                 'bg-yellow-200 text-yellow-800': value && value.id,
@@ -65,7 +68,7 @@ const closeModal = () => {
 
             <FormKit
               type="select"
-              name="group"
+              name="group_"
               help="Grupo al que deseas agregar esta pregunta"
               outer-class="!mb-0"
               :options="[

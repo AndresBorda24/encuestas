@@ -47,7 +47,7 @@ const { setQuestion, newQuestion } = useBuilderStore();
         <button
           type="button"
           class="text-red-700 underline text-xs block mx-auto"
-          @click="deleteQuestion(question.id)"
+          @click="deleteQuestion(question.id, question.group)"
         >Confirmar</button>
       </div>
     </details>

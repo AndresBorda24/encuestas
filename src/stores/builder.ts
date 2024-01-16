@@ -8,7 +8,7 @@ export const useBuilderStore = defineStore('builder', () => {
     const baseQuestion: question = {
       id: '',
       type: 'text',
-      group: undefined,
+      group: '',
       question: '',
       help: '',
       rules: [],

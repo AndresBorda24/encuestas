@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { useQuestionsStore } from '@/stores/questions';
-import { useSortable } from '@vueuse/integrations/useSortable';
+import { useSortable, moveArrayElement } from '@vueuse/integrations/useSortable';
 // Components ------------->
 import InputRange  from '@/components/input-range.vue';
-import InputGroup  from '@/components/input-group.vue';
 import InputGlobal from '@/components/input-global.vue';
 import QuestionActions from '@/components/question-actions.vue';
 
@@ -15,14 +14,22 @@ const props = defineProps<{
 const group = ref<HTMLElement | null>(null);
 const questionsList = props.questions
   ? props.questions
-  : storeToRefs( useQuestionsStore() ).questions;
+  : storeToRefs( useQuestionsStore() ).questionsList;
 
-useSortable(group, questionsList, {
+useSortable(group, questionsList.value, {
   handle: '.move-handle',
   animation: 200,
   fallbackOnBody: true,
   swapThreshold: 0.65,
   ghostClass: 'bg-teal-500/20',
+  onUpdate: (e) => {
+    moveArrayElement(questionsList, e.oldIndex, e.newIndex );
+    nextTick(() => {
+      if (! isRef(questionsList)) {
+        useQuestionsStore().setNewOrder( useQuestionsStore().questionsList );
+      }
+    });
+  }
 });
 </script>
 
@@ -43,7 +50,7 @@ useSortable(group, questionsList, {
         <p class="text-gray-700 text-sm">{{ question.help }}</p>
         <div class="p-2 border border-dotted border-gray-400 rounded">
           <QuestionPreviewList
-            :questions="question.questions"
+            :questions="question.questions || []"
             :value="value"
           />
         </div>
