@@ -11,6 +11,8 @@ import IconPlus  from '@/components/icons/icon-plus.vue';
 const { newQuestion } = useBuilderStore();
 const createCharacter = (value: any) => console.log(value);
 const { questionsList } = storeToRefs( useQuestionsStore() );
+
+const getPreviewImageUrl = (file) => URL.createObjectURL(file);
 </script>
 
 <template>
@@ -30,21 +32,40 @@ const { questionsList } = storeToRefs( useQuestionsStore() );
       >
         <span class="text-lg text-teal-500 font-bold">Datos Principales:</span>
 
-        <div class="rounded p-1 border-b">
-          <FormKit
-            type="text"
-            label="Título"
-            help="Este va a ser el titulo principal de la encuesta"
-            name="title"
-            validation="required"
-          />
-          <FormKit
-            type="textarea"
-            label="Presentación"
-            help="Texto que ayude a dar contexto a la encuesta."
-            name="description"
-          />
-        </div>
+        <FormKit
+          type="group"
+          name="cabecera"
+          #="{ value: cabValue }"
+        >
+          <div class="rounded p-1 border-b">
+            <FormKit
+              type="text"
+              label="Título"
+              help="Este va a ser el titulo principal de la encuesta"
+              name="title"
+              validation="required"
+            />
+            <FormKit
+              type="textarea"
+              label="Presentación"
+              help="Texto que ayude a dar contexto a la encuesta."
+              name="description"
+            />
+
+            <FormKit
+              type="file"
+              label="Portada"
+              help="Procura que la imagen no sea muy grande. Aconsejamos que sea rectangular.👍"
+              accept=".png,.jpg,.jpeg"
+              name="cover"
+            />
+            <img
+              v-if="cabValue.cover?.length > 0"
+              class="max-h-[500px] mx-auto rounded shadow-lg mb-4"
+              :src="getPreviewImageUrl(cabValue.cover[0].file)"
+            >
+          </div>
+        </FormKit>
 
         <span class="text-lg text-teal-500 font-bold">Preguntas:</span>
 

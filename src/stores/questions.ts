@@ -6,7 +6,7 @@ export const useQuestionsStore = defineStore('questions', () => {
 
     /** Retorna todas las preguntas que son un grupo en formato { id: nombre } */
     const groups = computed(() => {
-      let x: {[k: string]: string} = { "xx": "Ninguno" };
+      let x: {[k: string]: string} = { "": "Ninguno" };
       questions.value.map((q) => {
         if (q.type === 'group') x[q.id] = q.question;
       });
