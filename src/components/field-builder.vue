@@ -13,7 +13,7 @@ import Validation from "@/components/builder-steps/validation.vue";
 
 const { groups } = storeToRefs(useQuestionsStore());
 const { addQuestion, updateQuestion } = useQuestionsStore();
-const { visible, baseQuestion } = storeToRefs(useBuilderStore());
+const { visible, baseQuestion, isLoading } = storeToRefs(useBuilderStore());
 const { randomUUID } = new ShortUniqueId({ length: 10 });
 
 /** Actualiza o inserta una nueva pregunta */
@@ -28,8 +28,10 @@ const updateOrCreateQuestion = (data: question) => {
 
 /** Funcion que se ejecuta al completar el formulario de creacion */
 const submitHandler = (data: question) => {
+  isLoading.value = true;
   updateOrCreateQuestion(data);
   closeModal();
+  isLoading.value = false;
 }
 
 const closeModal = () => {

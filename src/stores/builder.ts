@@ -46,5 +46,5 @@ export const useBuilderStore = defineStore('builder', () => {
       setQuestion(x, false);
     }
 
-    return { visible, setQuestion, newQuestion, baseQuestion, setFormValue };
+    return { visible, setQuestion, newQuestion, baseQuestion, setFormValue, isLoading };
 });

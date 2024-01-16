@@ -8,26 +8,24 @@ import QuestionActions from '@/components/question-actions.vue';
 
 const props = defineProps<{
   value: any | any[]
-  questions?: []
+  questions: question[]
 }>();
 
 const group = ref<HTMLElement | null>(null);
-const questionsList = props.questions
-  ? props.questions
-  : storeToRefs( useQuestionsStore() ).questionsList;
+// const questionsList = props.questions
+//   ? props.questions
+//   : storeToRefs( useQuestionsStore() ).questionsList;
 
-useSortable(group, questionsList.value, {
+useSortable(group, props.questions, {
   handle: '.move-handle',
   animation: 200,
   fallbackOnBody: true,
   swapThreshold: 0.65,
   ghostClass: 'bg-teal-500/20',
   onUpdate: (e) => {
-    moveArrayElement(questionsList, e.oldIndex, e.newIndex );
+    moveArrayElement(props.questions, e.oldIndex, e.newIndex );
     nextTick(() => {
-      if (! isRef(questionsList)) {
-        useQuestionsStore().setNewOrder( useQuestionsStore().questionsList );
-      }
+      useQuestionsStore().setNewOrder( useQuestionsStore().questionsList );
     });
   }
 });
@@ -36,7 +34,7 @@ useSortable(group, questionsList.value, {
 <template>
   <div ref="group">
     <div
-      v-for="question in questionsList" :key="question.id"
+      v-for="question in questions" :key="question.id"
       class="group relative border border-gray-50 rounded p-4 border-dashed hover:border-teal-500"
     >
       <QuestionActions :question="question"/>

@@ -1,18 +1,20 @@
 <script setup lang="ts">
 import { FormKit } from '@formkit/vue';
 import { useBuilderStore } from '@/stores/builder';
+import { useQuestionsStore } from '@/stores/questions';
 import { useSortable } from '@vueuse/integrations/useSortable';
 // Comps ------>
 import FieldBuilder from '@/components/field-builder.vue';
 import QuestionPreviewList from '@/components/question-preview-list.vue';
 import IconPlus  from '@/components/icons/icon-plus.vue';
 
-const createCharacter = (value: any) => console.log(value);
 const { newQuestion } = useBuilderStore();
+const createCharacter = (value: any) => console.log(value);
+const { questionsList } = storeToRefs( useQuestionsStore() );
 </script>
 
 <template>
-  <main class="max-h-screen relative overflow-auto p-4">
+  <main class="max-h-screen relative">
     <FieldBuilder ref="fieldBuilder" />
 
     <FormKit
@@ -47,7 +49,7 @@ const { newQuestion } = useBuilderStore();
         <span class="text-lg text-teal-500 font-bold">Preguntas:</span>
 
         <FormKit type="group" name="question" #="{ value }">
-          <QuestionPreviewList :value="value"/>
+          <QuestionPreviewList :value="value" :questions="questionsList"/>
         </FormKit>
       </section>
     </FormKit>
