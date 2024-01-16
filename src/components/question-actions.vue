@@ -16,7 +16,7 @@ const { setQuestion, newQuestion } = useBuilderStore();
 </script>
 
 <template>
-  <div class="absolute w-full hidden group-hover:flex gap-2 top-0 right-0 pt-1 pr-1">
+  <div :class="`absolute w-full hidden group-hover/${ question.type === 'group' ? 'group' : 'item' }:flex gap-2 top-0 right-0 pt-1 pr-1`">
     <IconMove class="move-handle h-4 block mr-auto p-0.5 cursor-all-scroll text-teal-500" />
 
     <button

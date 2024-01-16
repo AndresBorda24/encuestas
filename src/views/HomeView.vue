@@ -26,11 +26,11 @@ const { questionsList } = storeToRefs( useQuestionsStore() );
       <section
         ref="container"
         id="form-questions-container"
-        class="p-6 grid gap-2 max-w-lg mx-auto bg-gray-50 border rounded overflow-auto"
+        class="p-3 sm:p-4 md:p-6 lg:8 grid gap-2 max-w-lg lg:max-w-xl mx-auto mt-3 bg-gray-50 border rounded overflow-auto"
       >
         <span class="text-lg text-teal-500 font-bold">Datos Principales:</span>
 
-        <div class="rounded p-4 border-b">
+        <div class="rounded p-1 border-b">
           <FormKit
             type="text"
             label="Título"

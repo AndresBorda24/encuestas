@@ -11,10 +11,9 @@ const props = defineProps<{
   questions: question[]
 }>();
 
+// Estas clases estan definidas para que tailwind las cargue.
+const classes = ["group/group","group/item","group-hover/group:flex","group-hover/item:flex "];
 const group = ref<HTMLElement | null>(null);
-// const questionsList = props.questions
-//   ? props.questions
-//   : storeToRefs( useQuestionsStore() ).questionsList;
 
 useSortable(group, props.questions, {
   handle: '.move-handle',
@@ -35,7 +34,7 @@ useSortable(group, props.questions, {
   <div ref="group">
     <div
       v-for="question in questions" :key="question.id"
-      class="group relative border border-gray-50 rounded p-4 border-dashed hover:border-teal-500"
+      :class="`group/${ question.type === 'group' ? 'group' : 'item' } relative border border-gray-50 rounded p-3 sm:p-4 md:p-5 border-dashed hover:border-teal-500`"
     >
       <QuestionActions :question="question"/>
       <InputRange
