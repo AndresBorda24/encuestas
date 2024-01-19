@@ -7,15 +7,16 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
+      component: HomeView,
       children: [
         {
           path: '',
           name: 'create-encuesta',
-          component: HomeView
+          component: () => import('@/components/the-create.vue')
         }, {
           path: ':id/edit',
           name: 'update-encuesta',
-          component: HomeView
+          component: () => import('@/components/the-update.vue')
         }
       ]
     }

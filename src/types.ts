@@ -1,5 +1,16 @@
 import type { FormKitOptionsList } from "@formkit/inputs"
 
+export type cabecera = {
+    title: string,
+    color: string,
+    description: string,
+    require_intranet: boolean,
+    id?: string|number,
+    user_id?: string|number,
+    created_at?: string,
+    updated_at?: string
+}
+
 export type inputType = "radio"
     | "checkbox"
     | "text"

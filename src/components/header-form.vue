@@ -1,16 +1,30 @@
 <script setup lang="ts">
 import { FormKit } from '@formkit/vue';
-const colors = {
-  'blue': 'bg-blue-600 bg-blue-800 text-blue-200 text-blue-100',
-  'teal': 'bg-teal-600 bg-teal-800 text-teal-200 text-teal-100',
-  'indigo': 'bg-indigo-600 bg-indigo-800 text-indigo-200 text-indigo-100'
-};
-const color = ref('blue');
+import type { cabecera } from '@/types';
+import { useCabeceraStore } from '@/stores/cabecera';
 
-const onSubmit = async (data: any) => {
-  data.color = color.value;
-  console.log(data);
-}
+const route = useRoute();
+const color = ref('blue');
+const router = useRouter();
+const { data: dataCabecera } = storeToRefs( useCabeceraStore() );
+const id = computed((): undefined|string => route.params?.id as string);
+const loadData = () => (id.value) ? useCabeceraStore().getCabecera(id.value, true) : null;
+
+const onSubmit = async (data: cabecera) => {
+  useCabeceraStore().setData({
+    id: id.value,
+    title: data.title,
+    description: data.description,
+    color: color.value,
+    require_intranet: data.require_intranet
+  });
+  const newId = await useCabeceraStore().save();
+  if (id.value || !newId) return;
+  router.push({ name: "update-encuesta", params: { id: newId } });
+};
+
+watch(id, () => loadData());
+onMounted(() => loadData());
 </script>
 
 <template>
@@ -21,30 +35,12 @@ const onSubmit = async (data: any) => {
       alt="Logo-Asotrauma Blanco"
       class="h-6"
     >
-
-    <div class="flex gap-3">
-      <label
-        v-for="(c, key) in colors" :key="key"
-        :for="`$color-${key}`"
-        :class="[`bg-${key}-600 border border-white h-6 w-6 ratio-1 rounded-full cursor-pointer`, {
-          'outline-1 outline-white outline-offset-2 outline': (key == color)
-        }]"
-      >
-        <input
-          type="radio"
-          v-model="color"
-          :value="key"
-          name="encuesta_color"
-          :id="`$color-${key}`"
-          class="appearence-none h-0"
-        >
-      </label>
-    </div>
   </div>
   <div class="max-w-3xl mx-auto">
     <FormKit
       @submit="onSubmit"
       type="form"
+      id="cabecera-form"
       submit-label="Guardar"
       :config="{
         classes: {
@@ -115,6 +111,15 @@ const onSubmit = async (data: any) => {
         }"
       />
     </FormKit>
+
+    <!-- Fechas -->
+    <p class="text-xs" v-if="dataCabecera?.created_at">
+      <span class="font-bold">Creada el:</span> {{ dataCabecera?.created_at }}
+    </p>
+    <p class="text-xs" v-if="dataCabecera?.updated_at">
+      <span class="font-bold">Ultima actualizacion de cabecera:</span>
+      {{ dataCabecera?.updated_at }}
+    </p>
   </div>
 </article>
 </template>
