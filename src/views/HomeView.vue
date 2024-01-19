@@ -2,8 +2,8 @@
 import { FormKit } from '@formkit/vue';
 import { useBuilderStore } from '@/stores/builder';
 import { useQuestionsStore } from '@/stores/questions';
-import { useSortable } from '@vueuse/integrations/useSortable';
 // Comps ------>
+import HeaderForm from '@/components/header-form.vue';
 import FieldBuilder from '@/components/field-builder.vue';
 import QuestionPreviewList from '@/components/question-preview-list.vue';
 import IconPlus  from '@/components/icons/icon-plus.vue';
@@ -18,9 +18,11 @@ const getPreviewImageUrl = (file) => URL.createObjectURL(file);
 <template>
   <main class="max-h-screen relative">
     <FieldBuilder ref="fieldBuilder" />
+    <HeaderForm />
 
     <FormKit
       type="form"
+      v-if="false"
       @submit="createCharacter"
       form-class="overflow-auto"
       submit-label="Guardar"
